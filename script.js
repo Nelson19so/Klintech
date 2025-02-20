@@ -5,6 +5,54 @@ document.addEventListener("DOMContentLoaded", () => {
   const scrollToTopBtn = document.querySelector(".scroll-to-top")
   let lastScrollTop = 0
 
+  // Toggle menu function
+  const toggleMenu = () => {
+    navToggle.classList.toggle("active")
+    navLinks.classList.toggle("active")
+
+    // Toggle body scroll
+    document.body.style.overflow = navLinks.classList.contains("active") ? "hidden" : ""
+
+    menuItems.forEach((item, index) => {
+      if (item.style.animation) {
+        item.style.animation = ""
+      } else {
+        item.style.animation = `fadeInUp 0.5s ease forwards ${index / 7 + 0.3}s`
+      }
+    })
+  }
+
+  // Toggle menu on nav-toggle click
+  navToggle.addEventListener("click", (e) => {
+    e.stopPropagation()
+    toggleMenu()
+  })
+
+  // Close mobile menu when a link is clicked
+  menuItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      if (window.innerWidth <= 768) {
+        toggleMenu()
+      }
+    })
+  })
+
+  // Close mobile menu when clicking outside
+  document.addEventListener("click", (e) => {
+    const isMenuOpen = navLinks.classList.contains("active")
+    const clickedInsideMenu = navLinks.contains(e.target)
+    const clickedOnToggle = navToggle.contains(e.target)
+
+    if (isMenuOpen && !clickedInsideMenu && !clickedOnToggle) {
+      toggleMenu()
+    }
+  })
+
+  // Prevent clicks inside the menu from closing it
+  navLinks.addEventListener("click", (e) => {
+    e.stopPropagation()
+  })
+
   // Smooth scrolling for navigation links
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener("click", function (e) {
@@ -18,27 +66,18 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   })
 
-  // Scroll event listener with optimized performance
+  // Scroll event listener
   window.addEventListener("scroll", () => {
-    requestAnimationFrame(() => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
 
-      if (scrollTop > 100) {
-        scrollToTopBtn.classList.add("show")
-      } else {
-        scrollToTopBtn.classList.remove("show")
-      }
+    // Toggle scroll-to-top button
+    if (scrollTop > 100) {
+      scrollToTopBtn.classList.add("show")
+    } else {
+      scrollToTopBtn.classList.remove("show")
+    }
 
-      if (scrollTop > lastScrollTop) {
-        navToggle.style.left = "auto"
-        navToggle.style.right = "20px"
-      } else {
-        navToggle.style.left = "20px"
-        navToggle.style.right = "auto"
-      }
-
-      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop
-    })
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop
   })
 
   // Scroll to top functionality
@@ -57,45 +96,20 @@ document.addEventListener("DOMContentLoaded", () => {
     contactForm.reset()
   })
 
-  // Optimized toggle menu function
-  const toggleMenu = () => {
-    navLinks.classList.toggle("active")
-    navToggle.classList.toggle("active")
-    menuItems.forEach((item, index) => {
-      if (item.style.animation) {
-        item.style.animation = ""
-      } else {
-        item.style.animation = `fadeInUp 0.5s ease forwards ${index / 7 + 0.3}s`
-      }
-    })
-  }
-
-  navToggle.addEventListener("click", toggleMenu)
-
-  menuItems.forEach((item) => {
-    item.addEventListener("click", () => {
-      if (window.innerWidth <= 768) {
-        toggleMenu()
-      }
-    })
-  })
-
-  // Optimized animate on scroll
+  // Animate on scroll
   const animateOnScroll = () => {
-    requestAnimationFrame(() => {
-      const elements = document.querySelectorAll(".project-card, .skill-category, .about-content")
-      elements.forEach((element) => {
-        const elementTop = element.getBoundingClientRect().top
-        const elementBottom = element.getBoundingClientRect().bottom
-        if (elementTop < window.innerHeight && elementBottom > 0) {
-          element.style.opacity = "1"
-          element.style.transform = "translateY(0)"
-        }
-      })
+    const elements = document.querySelectorAll(".project-card, .skill-category, .about-content")
+    elements.forEach((element) => {
+      const elementTop = element.getBoundingClientRect().top
+      const elementBottom = element.getBoundingClientRect().bottom
+      if (elementTop < window.innerHeight && elementBottom > 0) {
+        element.style.opacity = "1"
+        element.style.transform = "translateY(0)"
+      }
     })
   }
 
-  // Optimized Intersection Observer
+  // Intersection Observer for fade-in animation
   const fadeInObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -105,11 +119,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       })
     },
-    { threshold: 0.1, rootMargin: "50px" }
+    { threshold: 0.1 },
   )
 
   document.querySelectorAll(".fade-in").forEach((element) => {
     fadeInObserver.observe(element)
   })
 
+  // Initial animations
+  window.addEventListener("load", () => {
+    animateOnScroll()
+  })
+
+  window.addEventListener("scroll", animateOnScroll)
+})
 
