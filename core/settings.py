@@ -142,6 +142,15 @@ STATICFILES_DIRS = [
   BASE_DIR / 'static/'
 ]
 
+# Always define STATIC_ROOT for production deployment
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+
+# This only applies in production mode (DEBUG=False)
+if not DEBUG:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
