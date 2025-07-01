@@ -52,4 +52,4 @@ def main_app(request):
   else:
     form = get_in_touch_form()
 
-  return render(request, 'index.html')
+  return render(request, 'core/index.html')
